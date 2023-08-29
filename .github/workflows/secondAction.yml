@@ -1,0 +1,19 @@
+name: Test Primer action to get access token
+on:
+    workflow_dispatch:
+
+jobs:
+    checkout:
+      runs-on: ubuntu-latest
+      steps:
+        - id: get-access-token
+          uses: camertron/github-app-installation-auth-action@v1
+          with:
+            app-id: ${{ vars.APP_ID }}
+            installation-id: ${{ vars.INSTALLATION_ID }}
+            client-id: ${{ vars.CLIENT_ID }}
+            client-secret: ${{ secrets.CLIENT_SECRET }}
+            private-key: ${{ secrets.PRIVATE_KEY }}
+        - uses: actions/checkout@v3
+          with:
+            token: ${{ steps.get-access-token.outputs.access-token }}
