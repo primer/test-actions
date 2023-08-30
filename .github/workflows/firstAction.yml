@@ -1,8 +1,5 @@
-name: Test action
-on: 
-    pull_request:
-        branches:
-            - 'primer/react-integration-test-*'
+name: This action is going to be run a PR is created
+on: pull_request
 jobs:
     test:
         runs-on: ubuntu-latest
