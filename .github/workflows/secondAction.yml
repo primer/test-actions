@@ -24,12 +24,11 @@ jobs:
         with:
           script: |
             const fs = require('fs')
-            fs.writeFileSync('./README.md', JSON.stringify(pkg, null, 2))
             const response = await fetch('https://registry.npmjs.org/@primer/react')
             const data = await response.json()
             const { 'dist-tags' : tags} = data
             const latestNextTag = tags.next
-            fs.writeFileSync('./npm-workspaces/primer/package.json', `Latest primer react version is ${latestNextTag}`)
+            fs.writeFileSync('./README.md', `Latest primer react version is ${latestNextTag}`)
             return latestNextTag
         # env:
         #   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
