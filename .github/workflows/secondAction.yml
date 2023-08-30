@@ -3,17 +3,48 @@ on:
     workflow_dispatch:
 
 jobs:
-    checkout:
-      runs-on: ubuntu-latest
-      steps:
-        - id: get-access-token
-          uses: camertron/github-app-installation-auth-action@v1
-          with:
-            app-id: ${{ vars.APP_ID }}
-            installation-id: ${{ vars.INSTALLATION_ID }}
-            client-id: ${{ vars.CLIENT_ID }}
-            client-secret: ${{ secrets.CLIENT_SECRET }}
-            private-key: ${{ secrets.PRIVATE_KEY }}
-        - uses: actions/checkout@v3
-          with:
-            token: ${{ steps.get-access-token.outputs.access-token }}
+  create-pr:
+    runs-on: ubuntu-latest    
+    steps:
+      - id: get-access-token
+        uses: camertron/github-app-installation-auth-action@v1
+        with:
+          app-id: ${{ vars.APP_ID }}
+          installation-id: ${{ vars.INSTALLATION_ID }}
+          client-id: ${{ vars.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ steps.get-access-token.outputs.access-token }}
+      - name: Setup JS
+        uses: ./.github/actions/setup-js
+      - name: Write the next version of primer react to readme for test
+        id: primer-react-version
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs')
+            fs.writeFileSync('./README.md', JSON.stringify(pkg, null, 2))
+            const response = await fetch('https://registry.npmjs.org/@primer/react')
+            const data = await response.json()
+            const { 'dist-tags' : tags} = data
+            const latestNextTag = tags.next
+            fs.writeFileSync('./npm-workspaces/primer/package.json', `Latest primer react version is ${latestNextTag}`)
+            return latestNextTag
+        # env:
+        #   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #   GITHUB_TOKEN: ${{ steps.get-access-token.outputs.access-token }}
+      # Create a new PR with the release candidate installed
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ steps.get-access-token.outputs.access-token }}
+          base: master
+          branch: 'primer/react-integration-test'
+          delete-branch: true
+          commit-message: 'Integration tests for @primer/react ${{ steps.primer-react-version.outputs.result }}'
+          title: 'Integration tests for @primer/react '
+          body: |
+            test action permissions
