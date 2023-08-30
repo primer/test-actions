@@ -38,7 +38,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ steps.get-access-token.outputs.access-token }}
-          base: master
+          base: main
           branch: 'primer/react-integration-test'
           delete-branch: true
           commit-message: 'Integration tests for @primer/react ${{ steps.primer-react-version.outputs.result }}'
