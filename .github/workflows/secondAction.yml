@@ -1,4 +1,4 @@
-name: Test Primer action to get access token
+name: Test Primer action to trigger Ci jobs with read only actions
 on:
     push:
       branches:
