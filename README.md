@@ -1,2 +1,1 @@
-# test-actions
-This is a repo to test actions
+Latest primer react version is 35.29.0-rc.2ee91b24
