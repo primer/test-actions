@@ -8,4 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: Log something
-          run: echo "Hello world"
+          # MDEwOlJlcG9zaXRvcnkxMjE4MTQyMTA primer/react
+          run: |
+            gh api graphql -f query='
+              mutation {
+                lockMergeQueue(input: { repositoryId: "R_kgDOKNFQag"}) {
+                  headOid
+                  headRef
+                }
+              }
+            '
