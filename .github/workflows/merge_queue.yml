@@ -9,12 +9,15 @@ jobs:
     steps:
         - name: Log something
           # MDEwOlJlcG9zaXRvcnkxMjE4MTQyMTA primer/react
-          run: |
-            gh api graphql -f query='
+          uses: octokit/graphql-action@v2.x
+          id: get_latest_release
+          with:
+            query: |
               mutation {
                 lockMergeQueue(input: { repositoryId: "R_kgDOKNFQag"}) {
                   headOid
                   headRef
                 }
               }
-            '
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
